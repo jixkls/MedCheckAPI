@@ -2,6 +2,7 @@
 
 ## Integrantes
 - **Mateus dos Santos Monteiro**
+- **Luís Adriano**
 - **Diogo Bettin**
 - **Ian Lazarini**
 
