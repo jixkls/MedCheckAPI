@@ -16,7 +16,7 @@ Este projeto é o resultado do trabalho colaborativo da equipe formada por Mateu
 ## Arquitetura do Projeto
 Aqui está o diagrama que ilustra a arquitetura do sistema, mostrando os principais componentes e como interagem entre si.
 
-![Arquitetura do Projeto](./path-para-imagem/arquitetura.png)
+<img width="718" height="306" alt="projeto" src="https://github.com/user-attachments/assets/73b3fa33-efeb-498a-a33d-d28d40bcfa38" />
 
 > **Descrição**: O diagrama acima mostra a estrutura geral do sistema, incluindo os componentes principais como front-end, back-end, banco de dados e integrações com APIs externas.
 
