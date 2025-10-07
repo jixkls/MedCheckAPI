@@ -21,7 +21,7 @@ Aqui está o diagrama que ilustra a arquitetura do sistema, mostrando os princip
 > **Descrição**: O diagrama acima mostra a estrutura geral do sistema, incluindo os componentes principais como front-end, back-end, banco de dados e integrações com APIs externas.
 
 ## Ferramentas Utilizadas
-- **Linguagens de Programação**: [Python, JavaScript, etc.]
-- **Frameworks e Bibliotecas**: [React, Node.js, etc.]
-- **Banco de Dados**: [MySQL, MongoDB, etc.]
-- **Outras Ferramentas**: [Docker, Git, etc.]
+- **Linguagens de Programação**: [TypeScript]
+- **Frameworks e Bibliotecas**: [Node.js, Express.js]
+- **Banco de Dados**: [PostgreSQL]
+- **Outras Ferramentas**: [Docker, Git]
