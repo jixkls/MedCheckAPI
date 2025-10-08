@@ -1,7 +1,8 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 import express from "express";
 
-console.log(process.env.USER_DATABASE_DEV);
+console.log("USER_DATABASE_DEV:", process.env.USER_DATABASE_DEV);
 const app = express();
 
 const PORT = process.env.PORT || 3000;
