@@ -1,14 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+import "dotenv/config";
 import express from "express";
+import routerUser from "./router/userRoute.js";
 
 const app = express();
+const PORT = process.env.PORT;
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello world");
-});
+app.use("/api", routerUser);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on http://localhost:${PORT}`);
