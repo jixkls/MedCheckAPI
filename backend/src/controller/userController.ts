@@ -203,9 +203,16 @@ export const userController = {
         return res.status(403).json({ error: "Access denied. Admins only." });
       }
 
-      const { name, password, crm, cidade, especialidade } = req.body;
+      const { username, name, password, crm, cidade, especialidade } = req.body;
 
-      if (!name || !password || !crm || !cidade || !especialidade) {
+      if (
+        !username ||
+        !name ||
+        !password ||
+        !crm ||
+        !cidade ||
+        !especialidade
+      ) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
@@ -214,9 +221,22 @@ export const userController = {
 
       await client.query("BEGIN");
 
+      //o username deve ser unic deve ser unico
+
+      const userSelectQuery = {
+        text: `SELECT * FROM users WHERE username = $1`,
+        values: [username.toLowerCase()],
+      };
+
+      const existUser = await client.query(userSelectQuery);
+
+      if (existUser.rows.length > 0) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
       const userInsertQuery = {
         text: `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, 'user') RETURNING id, username`,
-        values: [name.toLowerCase(), hashedPassword],
+        values: [username.toLowerCase(), hashedPassword],
       };
 
       const userResult = await client.query(userInsertQuery);
