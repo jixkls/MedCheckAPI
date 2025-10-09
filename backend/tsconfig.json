@@ -19,6 +19,6 @@
     "jsx": "react-jsx"
   },
 
-  "include": ["./**/*.ts", "test/**/*.ts", "end.d.ts"],
+  "include": ["./**/*.ts", "test/**/*.ts", "end.d.ts", "src/type/index.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
