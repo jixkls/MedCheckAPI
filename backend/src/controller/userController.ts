@@ -191,4 +191,55 @@ export const userController = {
       client.release();
     }
   },
+
+  registerDoctor: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+
+    try {
+      //@ts-ignore
+      const userData = req.user;
+
+      if (!userData || userData.role !== "admin") {
+        return res.status(403).json({ error: "Access denied. Admins only." });
+      }
+
+      const { name, password, crm, cidade, especialidade } = req.body;
+
+      if (!name || !password || !crm || !cidade || !especialidade) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      await client.query("BEGIN");
+
+      const userInsertQuery = {
+        text: `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, 'user') RETURNING id, username`,
+        values: [name.toLowerCase(), hashedPassword],
+      };
+
+      const userResult = await client.query(userInsertQuery);
+      const newUser = userResult.rows[0];
+
+      const doctorInsertQuery = {
+        text: `INSERT INTO doctors (user_id, name, cidade, crm, especialidade) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+        values: [newUser.id, name.toLowerCase(), cidade, crm, especialidade],
+      };
+
+      const doctorResult = await client.query(doctorInsertQuery);
+
+      await client.query("COMMIT");
+
+      res.status(201).json({
+        message: "Doctor registered successfully",
+      });
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Error registering doctor:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
 };
