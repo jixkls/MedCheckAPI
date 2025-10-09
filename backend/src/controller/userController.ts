@@ -126,5 +126,69 @@ export const userController = {
     }
   },
 
-  editUser: async (req: Request, res: Response) => {},
+  editUser: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+
+    try {
+      //@ts-ignore
+      const userData = req.user;
+
+      if (!userData || !userData.id || !userData.role) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const { name, cidade, especialidade } = req.body;
+
+      let queryText = "";
+      let values: any[] = [];
+
+      if (userData.role === "user") {
+        queryText = `
+        UPDATE doctor
+        SET name = $1,
+            cidade = $2,
+            especialidade = $2
+        WHERE id = $5
+        RETURNING username, crm, cidade, especialidade
+      `;
+        values = [name, cidade, especialidade, userData.id];
+      } else if (userData.role === "admin") {
+        queryText = `
+        UPDATE users
+        SET username = $1
+        WHERE id = $2
+        RETURNING username
+      `;
+        values = [name, userData.id];
+      } else {
+        return res.status(403).json({ error: "Invalid role" });
+      }
+
+      const result = await client.query(queryText, values);
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "User not found or not updated" });
+      }
+
+      const updatedUser = result.rows[0];
+
+      res.status(200).json(
+        userData.role === "user"
+          ? {
+              name: updatedUser.name,
+              crm: updatedUser.crm,
+              cidade: updatedUser.cidade,
+              especialidade: updatedUser.especialidade,
+            }
+          : {
+              name: updatedUser.username,
+            },
+      );
+    } catch (error) {
+      console.error("Error editing user:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
 };
