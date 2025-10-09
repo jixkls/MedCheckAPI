@@ -17,7 +17,7 @@ export const userController = {
 
       const query = {
         text: "INSERT INTO users(username, password_hash, role) VALUES($1, $2, $3) RETURNING id, role",
-        values: [user.name, hashPassword, user.role],
+        values: [user.name.toLowerCase(), hashPassword, user.role],
       };
 
       const result = await client.query(query);
@@ -37,7 +37,41 @@ export const userController = {
     }
   },
   login: async (req: Request, res: Response) => {
-    // login logic here
-    res.send("Login route");
+    const client = await pool.connect();
+
+    try {
+      const { name, password } = req.body;
+
+      const query = {
+        text: "SELECT id, password_hash, role FROM users WHERE username = $1",
+        values: [name],
+      };
+
+      const result = await client.query(query);
+
+      if (result.rows.length === 0) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      const user = result.rows[0];
+
+      const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      const token = signToken({
+        id: user.id,
+        role: user.role,
+      });
+
+      res.status(200).json({ token });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } finally {
+      client.release();
+    }
   },
 };
