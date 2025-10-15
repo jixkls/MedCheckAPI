@@ -11,16 +11,27 @@ export const userController = {
     try {
       const user = req.body;
 
+      const selectUserQuery = {
+        text: "SELECT id FROM users WHERE username = $1",
+        values: [user.name.toLowerCase()],
+      };
+
+      const selectUser = await client.query(selectUserQuery);
+
+      if (selectUser.rows.length > 0) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
-      const hashPassword = await bcrypt.hash(user.password, salt); // assuming plaintext password
+      const hashPassword = await bcrypt.hash(user.password, salt);
 
-      const query = {
+      const insertQuery = {
         text: "INSERT INTO users(username, password_hash, role) VALUES($1, $2, $3) RETURNING id, role",
         values: [user.name.toLowerCase(), hashPassword, user.role],
       };
 
-      const result = await client.query(query);
+      const result = await client.query(insertQuery);
       const newUser = result.rows[0];
 
       const token = signToken({
@@ -258,6 +269,45 @@ export const userController = {
       await client.query("ROLLBACK");
       console.error("Error registering doctor:", error);
       res.status(500).json({ error: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
+
+  editDoctor: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    const idDoctor = req.params.id;
+    //@ts-ignore
+    const userData = req.user;
+
+    try {
+      if (userData.role !== "admin") {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { name, cidade, especialidade } = req.body;
+
+      const updateQuery = {
+        text: "UPDATE doctors SET name = $1, cidade = $2, especialidade = $3 WHERE crm = $4 RETURNING *",
+        values: [name, cidade, especialidade, idDoctor],
+      };
+
+      const result = await client.query(updateQuery);
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Doctor not found" });
+      }
+
+      const updatedDoctor = result.rows[0];
+
+      res.status(200).json({
+        nome: updatedDoctor.name,
+        crm: updatedDoctor.crm,
+        cidade: updatedDoctor.cidade,
+        especialidade: updatedDoctor.especialidade,
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
     } finally {
       client.release();
     }

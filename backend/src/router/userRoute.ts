@@ -10,5 +10,5 @@ router.get("/v1/users/me", userMiddleware.auth, userController.getUser);
 router.put("/v1/users/me", userMiddleware.auth, userController.editUser);
 
 router.post("/v1/doctors", userMiddleware.auth, userController.registerDoctor);
-
+router.put("/api/v1/doctors/:id", userController.editDoctor);
 export default router;
