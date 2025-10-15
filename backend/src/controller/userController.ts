@@ -369,5 +369,27 @@ export const userController = {
     client.release();
   }
 },
+getDoctorsById: async (req: Request, res: Response) => {
+  const client = await pool.connect();
+  try {
+    const { id } = req.params;
+
+    const result = await client.query(
+      "SELECT crm, name, especialidade, cidade FROM doctors WHERE crm = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    return res.status(200).json(result.rows[0]);
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  } finally {
+    client.release();
+  }
+},
+
 
 };
