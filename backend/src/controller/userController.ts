@@ -351,4 +351,23 @@ export const userController = {
       client.release();
     }
   },
+  getDoctors: async (req: Request, res: Response) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      "SELECT crm, name, especialidade, cidade FROM doctors ORDER BY name ASC"
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "No doctors found" });
+    }
+
+    return res.status(200).json(result.rows);
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  } finally {
+    client.release();
+  }
+},
+
 };
