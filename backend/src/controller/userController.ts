@@ -322,4 +322,33 @@ export const userController = {
       client.release();
     }
   },
+
+  deleteDoctor: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    //@ts-ignore
+    const userData = req.user;
+    try {
+      if (userData.role !== "admin") {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { id } = req.params;
+
+      const doctorResult = await client.query(
+        "SELECT * FROM doctors WHERE crm = $1",
+        [id],
+      );
+      if (doctorResult.rowCount === 0) {
+        return res.status(404).json({ message: "Doctor not found" });
+      }
+
+      await client.query("DELETE FROM doctors WHERE crm = $1", [id]);
+
+      return res.status(200).json({ message: "Doctor deleted successfully" });
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
 };

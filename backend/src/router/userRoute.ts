@@ -11,4 +11,10 @@ router.put("/v1/users/me", userMiddleware.auth, userController.editUser);
 
 router.post("/v1/doctors", userMiddleware.auth, userController.registerDoctor);
 router.put("/v1/doctors/:id", userMiddleware.auth, userController.editDoctor);
+router.delete(
+  "/v1/doctors/:id",
+  userMiddleware.auth,
+  userController.deleteDoctor,
+);
+
 export default router;
