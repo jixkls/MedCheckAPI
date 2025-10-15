@@ -232,10 +232,8 @@ export const userController = {
 
       await client.query("BEGIN");
 
-      //o username deve ser unic deve ser unico
-
       const userSelectQuery = {
-        text: `SELECT * FROM users WHERE username = $1`,
+        text: `SELECT id FROM users WHERE username = $1`,
         values: [username.toLowerCase()],
       };
 
@@ -243,6 +241,17 @@ export const userController = {
 
       if (existUser.rows.length > 0) {
         return res.status(400).json({ message: "Username already exists" });
+      }
+
+      const crmCheckQuery = {
+        text: `SELECT id FROM doctors WHERE crm = $1`,
+        values: [crm],
+      };
+
+      const existCRM = await client.query(crmCheckQuery);
+
+      if (existCRM.rows.length > 0) {
+        return res.status(400).json({ message: "CRM already exists" });
       }
 
       const userInsertQuery = {
@@ -258,7 +267,7 @@ export const userController = {
         values: [newUser.id, name.toLowerCase(), cidade, crm, especialidade],
       };
 
-      const doctorResult = await client.query(doctorInsertQuery);
+      await client.query(doctorInsertQuery);
 
       await client.query("COMMIT");
 
@@ -279,7 +288,6 @@ export const userController = {
     const idDoctor = req.params.id;
     //@ts-ignore
     const userData = req.user;
-
     try {
       if (userData.role !== "admin") {
         return res.status(401).json({ message: "Unauthorized" });
@@ -287,6 +295,7 @@ export const userController = {
 
       const { name, cidade, especialidade } = req.body;
 
+      console.log(idDoctor);
       const updateQuery = {
         text: "UPDATE doctors SET name = $1, cidade = $2, especialidade = $3 WHERE crm = $4 RETURNING *",
         values: [name, cidade, especialidade, idDoctor],
@@ -307,6 +316,7 @@ export const userController = {
         especialidade: updatedDoctor.especialidade,
       });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: "Internal server error" });
     } finally {
       client.release();
