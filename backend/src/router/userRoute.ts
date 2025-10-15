@@ -16,5 +16,8 @@ router.delete(
   userMiddleware.auth,
   userController.deleteDoctor,
 );
+router.get("/v1/doctors", userController.getDoctors)
+router.get("/v1/doctors/:id", userController.getDoctorsById)
 
+router.get("/v1/specialties", userController.getSpecialists)
 export default router;
