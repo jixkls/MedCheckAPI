@@ -352,65 +352,63 @@ export const userController = {
     }
   },
   getDoctors: async (req: Request, res: Response) => {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(
-      "SELECT crm, name, especialidade, cidade FROM doctors ORDER BY name ASC"
-    );
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        "SELECT crm, name, especialidade, cidade FROM doctors ORDER BY name ASC",
+      );
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "No doctors found" });
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "No doctors found" });
+      }
+
+      return res.status(200).json(result.rows);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
     }
+  },
+  getDoctorsById: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    try {
+      const { id } = req.params;
+      const cleanedId = id.trim();
 
-    return res.status(200).json(result.rows);
-  } catch (err) {
- 
-    console.error(err)
-    return res.status(500).json({ message: "Internal server error" });
-  } finally {
-    client.release();
-  }
-},
-getDoctorsById: async (req: Request, res: Response) => {
-  const client = await pool.connect();
-  try {
-    const { id } = req.params;
+      const result = await client.query(
+        "SELECT crm, name, especialidade, cidade FROM doctors WHERE crm = $1",
+        [id],
+      );
 
-    const result = await client.query(
-      "SELECT crm, name, especialidade, cidade FROM doctors WHERE crm = $1",
-      [id]
-    );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Doctor not found" });
+      }
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Doctor not found" });
+      return res.status(200).json(result.rows[0]);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
     }
+  },
+  getSpecialists: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        "SELECT DISTINCT especialidade FROM doctors ORDER BY especialidade ASC",
+      );
 
-    return res.status(200).json(result.rows[0]);
-  } catch (err) {
-    
-    console.error(err)
-    return res.status(500).json({ message: "Internal server error" });
-  } finally {
-    client.release();
-  }
-},
-getSpecialists: async (req: Request, res: Response) => {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(
-      "SELECT DISTINCT especialidade FROM doctors ORDER BY especialidade ASC"
-    );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "No specialists found" });
+      }
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "No specialists found" });
+      return res.status(200).json(result.rows);
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
     }
-
-    return res.status(200).json(result.rows);
-  } catch (err) {
-    return res.status(500).json({ message: "Internal server error" });
-  } finally {
-    client.release();
-  }
-},
-
+  },
 };
