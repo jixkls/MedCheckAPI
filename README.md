@@ -7,7 +7,7 @@
 - **Ian Lazarini**
 
 ## Descrição do Projeto
-Este projeto é o resultado do trabalho colaborativo da equipe formada por Mateus dos Santos Monteiro, Diogo Bettin, Luís Adriano e Ian Lazarini. Nosso objetivo é criar uma solução inovadora e eficaz, aplicando as melhores práticas de desenvolvimento e as tecnologias mais recentes.
+Este projeto consiste em um sistema CRUD (Create, Read, Update, Delete) desenvolvido para demonstrar o funcionamento completo de operações de cadastro. Ele permite inserir, consultar, editar e excluir registros em um banco de dados, garantindo interação dinâmica entre a aplicação e os dados armazenados.
 
 ## Objetivos
 - **Desenvolver**: A construção de uma aplicação robusta, escalável e fácil de manter.
