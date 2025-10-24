@@ -31,3 +31,20 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 export async function getMe() {
     return apiFetch('/users/me');
 }
+
+
+export async function getDoctor(): Promise<any[]> {
+    const resp = await apiFetch('/doctors');
+    return resp;
+}
+
+
+export async function addDoctor(){
+    console.log("Aaaah")
+}
+export async function updateDoctor(){
+    console.log("Aaaah")
+}
+export async function removeDoctor(){
+    console.log("Aaaah")
+}
