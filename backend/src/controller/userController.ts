@@ -411,4 +411,47 @@ export const userController = {
       client.release();
     }
   },
+  searchDoctors: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    try {
+      const { specialty, city, name } = req.query;
+  
+      let baseQuery = `
+        SELECT crm, name, especialidade, cidade
+        FROM doctors
+        WHERE 1=1
+      `;
+      const values: any[] = [];
+  
+      if (specialty) {
+        values.push(`%${specialty}%`);
+        baseQuery += ` AND especialidade ILIKE $${values.length}`;
+      }
+  
+      if (city) {
+        values.push(`%${city}%`);
+        baseQuery += ` AND cidade ILIKE $${values.length}`;
+      }
+  
+      if (name) {
+        values.push(`%${name}%`);
+        baseQuery += ` AND name ILIKE $${values.length}`;
+      }
+  
+      baseQuery += ` ORDER BY name ASC`;
+  
+      const result = await client.query(baseQuery, values);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "No doctors found" });
+      }
+  
+      return res.status(200).json(result.rows);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
 };

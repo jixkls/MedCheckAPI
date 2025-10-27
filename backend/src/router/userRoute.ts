@@ -19,5 +19,8 @@ router.delete(
 router.get("/v1/doctors", userController.getDoctors)
 router.get("/v1/doctors/:id", userController.getDoctorsById)
 
+router.get("/v1/search/doctors", userController.searchDoctors);
+
+
 router.get("/v1/specialties", userController.getSpecialists)
 export default router;
