@@ -454,4 +454,24 @@ export const userController = {
       client.release();
     }
   },
+  getCities: async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        "SELECT DISTINCT cidade FROM doctors ORDER BY cidade ASC"
+      );
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "No cities found" });
+      }
+  
+      return res.status(200).json(result.rows);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal server error" });
+    } finally {
+      client.release();
+    }
+  },
+  
 };

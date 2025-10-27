@@ -21,6 +21,6 @@ router.get("/v1/doctors/:id", userController.getDoctorsById)
 
 router.get("/v1/search/doctors", userController.searchDoctors);
 
-
 router.get("/v1/specialties", userController.getSpecialists)
+router.get("/v1/cities", userController.getCities);
 export default router;
