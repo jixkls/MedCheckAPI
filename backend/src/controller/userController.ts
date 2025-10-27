@@ -473,5 +473,9 @@ export const userController = {
       client.release();
     }
   },
+  healthCheck: async (req: Request, res: Response) => {
+    return res.status(200).json({ status: "OK" });
+  },
+  
   
 };

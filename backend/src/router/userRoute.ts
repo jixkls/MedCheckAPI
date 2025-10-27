@@ -23,4 +23,5 @@ router.get("/v1/search/doctors", userController.searchDoctors);
 
 router.get("/v1/specialties", userController.getSpecialists)
 router.get("/v1/cities", userController.getCities);
+router.get("/v1/health", userController.healthCheck);
 export default router;
