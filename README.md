@@ -27,5 +27,5 @@ Aqui está o diagrama que ilustra a arquitetura do sistema, mostrando os princip
 - **Banco de Dados**: [PostgreSQL]
 - **Outras Ferramentas**: [Docker, Git]
 
-  ⚠️ **Atenção:** Este é um projeto pessoal. Optamos por deixar a pasta `node_modules` e o arquivo `.env` no repositório para facilitar a execução e testes por parte de outros desenvolvedores. Em projetos profissionais, essa prática **não é recomendada** por questões de segurança e boas práticas de versionamento.
+⚠️ Atenção: Este é um projeto pessoal e uma API pública. Optamos por deixar a pasta node_modules e o arquivo .env no repositório para facilitar a execução e testes por parte de outros desenvolvedores.
 
