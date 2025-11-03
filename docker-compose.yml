@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   medcheckapi-network:
 
@@ -17,6 +19,8 @@ services:
       - postgres
     networks:
       - medcheckapi-network
+    mem_limit: 512m
+    cpus: 0.5
 
   postgres:
     image: postgres:17
@@ -28,6 +32,9 @@ services:
       - "5433:5432"
     networks:
       - medcheckapi-network
+    mem_limit: 512m
+    cpus: 0.5
     volumes:
       - ./backend/src/med_check_api.backup:/docker-entrypoint-initdb.d/med_check_api.backup
       - ./backend/src/restores.sh:/docker-entrypoint-initdb.d/restores.sh
+
